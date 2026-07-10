@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" preserveAspectRatio="xMidYMid slice" role="img">
+<defs>
+    <linearGradient id="p3-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FAF8F3"/><stop offset="1" stop-color="#DED6C6"/>
+    </linearGradient>
+    <linearGradient id="p3-left" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9BFAD"/><stop offset="1" stop-color="#E7E1D5"/>
+    </linearGradient>
+    <linearGradient id="p3-right" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E7E1D5"/><stop offset="1" stop-color="#6B6459"/>
+    </linearGradient>
+    <filter id="p3-grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0"/>
+    </filter>
+  </defs><rect width="800" height="1000" fill="url(#p3-bg)"/>
+  <polygon points="80,180 400,120 400,880 80,940" fill="url(#p3-left)"/>
+  <polygon points="400,120 720,180 720,940 400,880" fill="url(#p3-right)" opacity="0.92"/>
+  <line x1="400" y1="120" x2="400" y2="880" stroke="#1F1C18" stroke-width="1.5" opacity="0.18"/>
+  <polygon points="80,180 400,120 400,300 80,360" fill="#FAF8F3" opacity="0.28"/>
+  <rect x="0" y="0" width="800" height="1000" filter="url(#p3-grain)" opacity="0.08"/>
+</svg>
