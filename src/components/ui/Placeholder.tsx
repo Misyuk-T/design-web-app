@@ -1,7 +1,7 @@
 import { cx } from "./cx";
 
 export interface PlaceholderProps {
-  /** Local asset path, e.g. "/images/hero.svg" (no remote assets — NFR-B1). */
+  /** Local asset path, e.g. "/images/hero.jpg" (no remote assets — NFR-B1). */
   src: string;
   /**
    * Descriptive alt for meaningful imagery. Leave undefined/"" for purely

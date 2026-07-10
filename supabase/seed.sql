@@ -77,7 +77,7 @@ insert into projects (
 Studio Kova held the project from first sketch to final fitting: architecture, interior, the full construction set, and the visualizations that let the family live in the house a year before it existed. Oak, lime, and blackened steel repeat throughout, so the building reads as one material argument rather than a collection of rooms.
 
 The result is a house that feels found rather than placed — a piece of the landscape given just enough shape to be lived in.$$,
-    '/images/project-1.svg', '{/images/project-1.svg,/images/project-2.svg,/images/project-3.svg}',
+    '/images/project-1.jpg', '{/images/project-1.jpg,/images/project-2.jpg,/images/project-3.jpg}',
     'Architecture · Interior · Documentation · Visualization', true, 1
   ),
   (
@@ -89,7 +89,7 @@ The result is a house that feels found rather than placed — a piece of the lan
 Walls are finished in lime plaster tinted the colour of unbleached linen; floors are wide reclaimed oak. Everything unnecessary was taken away so that light, and the few good things the owners kept, could be felt.
 
 We designed the interior, drew the joinery for the maker, and produced the visualizations that guided every decision on material and tone.$$,
-    '/images/project-2.svg', '{/images/project-2.svg,/images/project-4.svg,/images/project-1.svg}',
+    '/images/project-2.jpg', '{/images/project-2.jpg,/images/project-4.jpg,/images/project-1.jpg}',
     'Interior Design · Joinery Documentation · Visualization', true, 2
   ),
   (
@@ -101,7 +101,7 @@ We designed the interior, drew the joinery for the maker, and produced the visua
 We modelled the geometry, printed and fired successive prototypes to resolve the joint and the tolerance, then produced the final set of pieces on the studio's own machines. Nothing about the object passed through a supplier we could not stand beside.
 
 It is a small building, but it is the clearest statement of how we work: an idea drawn, tested, and made under one roof.$$,
-    '/images/project-3.svg', '{/images/project-3.svg,/images/project-5.svg,/images/project-6.svg}',
+    '/images/project-3.jpg', '{/images/project-3.jpg,/images/project-5.jpg,/images/project-6.jpg}',
     '3D Printing · Prototyping · Architecture', true, 3
   ),
   (
@@ -113,7 +113,7 @@ It is a small building, but it is the clearest statement of how we work: an idea
 We built the scene from the architect's model, developing materials, lighting, and staging until each frame read as a photograph of a place that already existed. The images did their work — the scheme was won, and the studio was retained through delivery.
 
 This is the visualization service standing on its own: quiet, precise, and true to the design it represents.$$,
-    '/images/project-4.svg', '{/images/project-4.svg,/images/project-2.svg,/images/project-1.svg}',
+    '/images/project-4.jpg', '{/images/project-4.jpg,/images/project-2.jpg,/images/project-1.jpg}',
     '3D Visualization · Art Direction', true, 4
   ),
   (
@@ -125,7 +125,7 @@ This is the visualization service standing on its own: quiet, precise, and true 
 Working from the concept set, we resolved the constructive detail, coordinated the disciplines, and delivered a permit and construction package precise enough to price and build without ambiguity. It is careful, patient work, and it is where many good designs are quietly lost or saved.
 
 We take it as seriously as any facade: the drawing is the design, made durable.$$,
-    '/images/project-5.svg', '{/images/project-5.svg,/images/project-6.svg,/images/project-3.svg}',
+    '/images/project-5.jpg', '{/images/project-5.jpg,/images/project-6.jpg,/images/project-3.jpg}',
     'Drafting · Construction Documentation · Coordination', true, 5
   ),
   (
@@ -137,6 +137,6 @@ We take it as seriously as any facade: the drawing is the design, made durable.$
 We designed a compact timber-frame volume with a clerestory that washes the working wall in even north light, a poured lime floor, and built-in oak shelving sized to the maker's own vessels. Studio Kova carried the project from concept through the full construction documentation and onto site.
 
 Restraint was the whole design: one material palette, one source of light, and nothing that competes with the work made inside.$$,
-    '/images/project-6.svg', '{/images/project-6.svg,/images/project-1.svg,/images/project-5.svg}',
+    '/images/project-6.jpg', '{/images/project-6.jpg,/images/project-1.jpg,/images/project-5.jpg}',
     'Architecture · Interior · Documentation', true, 6
   );

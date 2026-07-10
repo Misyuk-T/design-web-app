@@ -46,7 +46,7 @@ export default async function Studio() {
         {/* Quiet supporting plate — decorative, zero layout shift. */}
         <div className="mt-14 md:mt-20">
           <Placeholder
-            src="/images/studio.svg"
+            src="/images/studio.jpg"
             aspect="3/2"
             className="w-full"
           />

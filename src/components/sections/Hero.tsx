@@ -25,7 +25,7 @@ export default async function Hero() {
       {/* Atmospheric plate + warm scrim (decorative — hidden from AT). */}
       <div className="absolute inset-0 -z-10">
         <Placeholder
-          src="/images/hero.svg"
+          src="/images/hero.jpg"
           aspect="16/10"
           priority
           className="h-full"

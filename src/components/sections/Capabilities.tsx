@@ -34,7 +34,7 @@ export default async function Capabilities() {
   const plateFor = (key: Discipline): string =>
     projects.find((p) => p.discipline === key)?.coverImage ??
     projects.find((p) => p.disciplines?.includes(key))?.coverImage ??
-    "/images/texture.svg";
+    "/images/texture.jpg";
 
   const offerings = TRADE_KEYS.map((key) => services.find((s) => s.key === key))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
