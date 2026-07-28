@@ -685,18 +685,19 @@
   background: #2d2a25;
 }
 
-.projectImage {
-  object-fit: cover;
-  transition: transform 1.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.projectLink:hover .projectImage {
-  transform: scale(1.025);
+.projectDeck {
+  position: absolute !important;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .projectShade {
   position: absolute;
+  z-index: 1;
   inset: 0;
+  pointer-events: none;
   background:
     linear-gradient(180deg, rgba(10, 10, 9, 0.54), transparent 35%),
     linear-gradient(0deg, rgba(10, 10, 9, 0.86), transparent 52%);
@@ -704,6 +705,7 @@
 
 .projectTopline {
   position: absolute;
+  z-index: 2;
   top: 1.35rem;
   right: 1.35rem;
   left: 1.35rem;
@@ -724,6 +726,7 @@
 
 .projectTitle {
   position: absolute;
+  z-index: 3;
   right: 1.35rem;
   bottom: clamp(7rem, 14vh, 10rem);
   left: 1.35rem;
@@ -745,6 +748,7 @@
 
 .projectSummary {
   position: absolute;
+  z-index: 2;
   right: 1.35rem;
   bottom: 1.65rem;
   max-width: 50ch;
@@ -755,6 +759,7 @@
 
 .projectRole {
   position: absolute;
+  z-index: 2;
   bottom: 1.65rem;
   left: 1.35rem;
   max-width: 35ch;
@@ -768,6 +773,7 @@
 
 .projectView {
   position: absolute;
+  z-index: 3;
   top: 50%;
   left: 50%;
   display: flex;

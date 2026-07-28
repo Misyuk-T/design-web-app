@@ -1,0 +1,263 @@
+.deck {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #24221f;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.deck:active {
+  cursor: grabbing;
+}
+
+.deck::before,
+.deck::after {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  content: "";
+}
+
+.deck::before {
+  inset: 1rem;
+  border: 1px solid rgba(240, 237, 229, 0.32);
+  clip-path: polygon(
+    0 0,
+    2.25rem 0,
+    2.25rem 1px,
+    1px 1px,
+    1px 2.25rem,
+    0 2.25rem,
+    0 0,
+    100% 0,
+    100% 2.25rem,
+    calc(100% - 1px) 2.25rem,
+    calc(100% - 1px) 1px,
+    calc(100% - 2.25rem) 1px,
+    calc(100% - 2.25rem) 0,
+    100% 0,
+    100% 100%,
+    calc(100% - 2.25rem) 100%,
+    calc(100% - 2.25rem) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - 2.25rem),
+    100% calc(100% - 2.25rem),
+    100% 100%,
+    0 100%,
+    0 calc(100% - 2.25rem),
+    1px calc(100% - 2.25rem),
+    1px calc(100% - 1px),
+    2.25rem calc(100% - 1px),
+    2.25rem 100%,
+    0 100%
+  );
+}
+
+.deck::after {
+  top: 50%;
+  left: 50%;
+  width: 2.4rem;
+  height: 2.4rem;
+  opacity: 0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 0.5px),
+      rgba(240, 237, 229, 0.65) calc(50% - 0.5px),
+      rgba(240, 237, 229, 0.65) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(
+      transparent calc(50% - 0.5px),
+      rgba(240, 237, 229, 0.65) calc(50% - 0.5px),
+      rgba(240, 237, 229, 0.65) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    );
+  transition:
+    opacity 500ms ease,
+    rotate 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  translate: -50% -50%;
+}
+
+.deck:hover::after,
+.deck:focus-within::after {
+  opacity: 0.72;
+  rotate: 90deg;
+}
+
+.slide {
+  z-index: 0;
+  object-fit: cover;
+  opacity: 0;
+  clip-path: inset(0 0 0 100%);
+  scale: 1.045;
+  transition:
+    clip-path 850ms cubic-bezier(0.77, 0, 0.175, 1),
+    opacity 300ms ease,
+    scale 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.slide[data-active="true"] {
+  z-index: 1;
+  opacity: 1;
+  clip-path: inset(0);
+  scale: 1;
+}
+
+.controls {
+  position: absolute;
+  z-index: 5;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  left: 0.9rem;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  color: #f0ede5;
+}
+
+.button {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid rgba(240, 237, 229, 0.48);
+  border-radius: 999px;
+  background: rgba(24, 22, 19, 0.38);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    border-color 300ms ease,
+    background 300ms ease,
+    transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.button:hover,
+.button:focus-visible {
+  border-color: #f0ede5;
+  background: rgba(24, 22, 19, 0.72);
+  outline: none;
+  transform: scale(1.06);
+}
+
+.progress {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.rail {
+  position: relative;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(240, 237, 229, 0.35);
+}
+
+.rail span {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  transform: scaleX(var(--deck-progress));
+  transform-origin: left;
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hint {
+  display: none;
+}
+
+.deck[data-mode="editorial"] {
+  box-shadow:
+    7px -7px 0 -1px #181613,
+    7px -7px 0 0 rgba(240, 237, 229, 0.28),
+    14px -14px 0 -1px #181613,
+    14px -14px 0 0 rgba(240, 237, 229, 0.14);
+}
+
+.deck[data-mode="editorial"] .controls {
+  opacity: 0;
+  translate: 0 0.5rem;
+  transition:
+    opacity 350ms ease,
+    translate 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.deck[data-mode="editorial"]:hover .controls,
+.deck[data-mode="editorial"]:focus-within .controls {
+  opacity: 1;
+  translate: 0;
+}
+
+.deck[data-mode="cinematic"] .controls {
+  top: 4.25rem;
+  right: 1.35rem;
+  bottom: auto;
+  left: auto;
+  width: min(17rem, calc(100% - 2.7rem));
+}
+
+.deck[data-mode="cinematic"]::before {
+  inset: 1.35rem;
+}
+
+.deck[data-mode="cinematic"] .slide {
+  clip-path: inset(0 100% 0 0);
+  filter: saturate(0.88);
+  scale: 1.06;
+}
+
+.deck[data-mode="cinematic"] .slide[data-active="true"] {
+  clip-path: inset(0);
+  filter: saturate(1);
+  scale: 1.025;
+}
+
+.deck[data-mode="cinematic"] .progress {
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(240, 237, 229, 0.42);
+  border-radius: 999px;
+  background: rgba(17, 17, 15, 0.38);
+  backdrop-filter: blur(12px);
+}
+
+@media (max-width: 767px) {
+  .deck[data-mode="editorial"] .controls {
+    opacity: 1;
+    translate: 0;
+  }
+
+  .deck[data-mode="cinematic"] .controls {
+    top: 4.7rem;
+    right: 1rem;
+    width: 12.5rem;
+  }
+
+  .deck[data-mode="cinematic"] .progress {
+    grid-template-columns: auto 1fr;
+  }
+
+  .deck[data-mode="cinematic"] .progress > span:last-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck::after,
+  .slide,
+  .rail span,
+  .controls,
+  .button {
+    transition: none;
+  }
+}

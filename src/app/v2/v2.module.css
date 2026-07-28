@@ -671,7 +671,7 @@
 }
 
 .projectRow:hover {
-  min-height: clamp(8rem, 11vw, 11rem);
+  min-height: clamp(11rem, 15vw, 14rem);
   padding-inline: 1rem;
   color: var(--black);
 }
@@ -714,8 +714,8 @@
   right: 7%;
   width: min(18vw, 16rem);
   aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 1px solid var(--white);
+  overflow: visible;
+  perspective: 900px;
   opacity: 0;
   pointer-events: none;
   transform: translateY(-45%) rotate(4deg) scale(0.86);
@@ -726,11 +726,45 @@
 
 .projectThumb img {
   object-fit: cover;
+  border: 1px solid var(--white);
+  box-shadow: 0 1.2rem 2.2rem rgba(0, 0, 0, 0.28);
+  transform-origin: 50% 100%;
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.projectThumb img:first-child {
+  z-index: 3;
+  transform: rotate(-1deg);
+}
+
+.projectThumb img:nth-child(2) {
+  z-index: 2;
+  transform: translate(4%, -2%) rotate(3deg);
+}
+
+.projectThumb img:nth-child(3) {
+  z-index: 1;
+  transform: translate(-3%, 3%) rotate(-4deg);
 }
 
 .projectRow:hover .projectThumb {
   opacity: 1;
-  transform: translateY(-50%) rotate(-2deg) scale(1);
+  transform: translateY(-50%) rotate(0) scale(1);
+}
+
+.projectRow:hover .projectThumb img:first-child,
+.projectRow:focus-visible .projectThumb img:first-child {
+  transform: translate(-10%, 2%) rotate(-6deg);
+}
+
+.projectRow:hover .projectThumb img:nth-child(2),
+.projectRow:focus-visible .projectThumb img:nth-child(2) {
+  transform: translate(8%, -8%) rotate(4deg);
+}
+
+.projectRow:hover .projectThumb img:nth-child(3),
+.projectRow:focus-visible .projectThumb img:nth-child(3) {
+  transform: translate(16%, 8%) rotate(10deg);
 }
 
 .projectSummary {
@@ -757,7 +791,7 @@
 
 .projectRow:focus-visible .projectThumb {
   opacity: 1;
-  transform: translateY(-50%) rotate(-2deg) scale(1);
+  transform: translateY(-50%) rotate(0) scale(1);
 }
 
 .rowArrow {
@@ -2037,6 +2071,8 @@
   .collagePrimary,
   .collageSecondary,
   .collageCard,
+  .projectThumb,
+  .projectThumb img,
   .contactCrosshair {
     translate: 0 0;
     transition: none;

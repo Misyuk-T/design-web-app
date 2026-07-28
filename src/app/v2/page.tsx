@@ -392,40 +392,50 @@ export default async function VersionTwoPage() {
           </div>
 
           <div className={styles.projectTable} role="list">
-            {selected.map((project, index) => (
-              <Link
-                href={`/projects/${project.slug}`}
-                className={styles.projectRow}
-                key={project.id}
-                role="listitem"
-              >
-                <span className={styles.projectNumber}>
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className={styles.projectName}>{project.title}</span>
-                <span className={styles.projectDiscipline}>
-                  {disciplineLabels[locale][project.discipline]}
-                </span>
-                <span className={styles.projectLocation}>
-                  {project.location}
-                </span>
-                <span className={styles.projectYear}>{project.year}</span>
-                <span className={styles.projectSummary}>
-                  {project.summary}
-                </span>
-                <span className={styles.projectThumb}>
-                  <Image
-                    src={project.coverImage}
-                    alt=""
-                    fill
-                    sizes="(max-width: 767px) 38vw, 18vw"
-                  />
-                </span>
-                <span className={styles.rowArrow} aria-hidden="true">
-                  ↗
-                </span>
-              </Link>
-            ))}
+            {selected.map((project, index) => {
+              const previewImages =
+                project.images.length > 0
+                  ? project.images.slice(0, 3)
+                  : [project.coverImage];
+
+              return (
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className={styles.projectRow}
+                  key={project.id}
+                  role="listitem"
+                >
+                  <span className={styles.projectNumber}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={styles.projectName}>{project.title}</span>
+                  <span className={styles.projectDiscipline}>
+                    {disciplineLabels[locale][project.discipline]}
+                  </span>
+                  <span className={styles.projectLocation}>
+                    {project.location}
+                  </span>
+                  <span className={styles.projectYear}>{project.year}</span>
+                  <span className={styles.projectSummary}>
+                    {project.summary}
+                  </span>
+                  <span className={styles.projectThumb}>
+                    {previewImages.map((image, imageIndex) => (
+                      <Image
+                        key={`${image}-${imageIndex}`}
+                        src={image}
+                        alt=""
+                        fill
+                        sizes="(max-width: 767px) 38vw, 18vw"
+                      />
+                    ))}
+                  </span>
+                  <span className={styles.rowArrow} aria-hidden="true">
+                    ↗
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 

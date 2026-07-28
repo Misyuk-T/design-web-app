@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Placeholder } from "@/components/ui/Placeholder";
 import { LinkButton } from "@/components/ui/LinkButton";
+import { ProjectImageDeck } from "@/components/projects/ProjectImageDeck";
 import { disciplineLabels, getCommonCopy } from "@/lib/i18n";
 import { getLocalizedContent } from "@/lib/locale";
 import { localizedPath } from "@/lib/locale-shared";
@@ -82,20 +82,25 @@ export async function SelectedProjects() {
         <ul className="mt-16 grid grid-cols-1 gap-y-16 md:mt-24 md:grid-cols-12 md:gap-x-8 md:gap-y-24">
           {featured.map((project, index) => {
             const layout = CARD_LAYOUT[index];
+            const images =
+              project.images.length > 0
+                ? project.images
+                : [project.coverImage];
             return (
               <li key={project.id} className={layout.className}>
+                <ProjectImageDeck
+                  images={images}
+                  title={project.title}
+                  locale={locale}
+                  mode="editorial"
+                  sizes={layout.sizes}
+                  aspectRatio={layout.aspect}
+                />
                 <Link
                   href={localizedPath(locale, `/projects/${project.slug}`)}
-                  className="group block"
+                  className="group mt-5 block"
                 >
-                  <Placeholder
-                    src={project.coverImage}
-                    alt={project.title}
-                    aspect={layout.aspect}
-                    sizes={layout.sizes}
-                    imgClassName="transition-transform duration-[900ms] ease-quiet group-hover:scale-[1.025]"
-                  />
-                  <div className="mt-5 flex items-start justify-between gap-5 border-t border-bone/20 pt-4">
+                  <div className="flex items-start justify-between gap-5 border-t border-bone/20 pt-4">
                     <div>
                       <p className="eyebrow text-bone/65">
                         {disciplineLabels[locale][project.discipline]}

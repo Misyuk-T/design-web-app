@@ -5,8 +5,10 @@ import { ConceptMotionShell } from "@/components/concepts/ConceptMotionShell";
 import { MotionTicker } from "@/components/concepts/MotionTicker";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { VariantSwitch } from "@/components/layout/VariantSwitch";
+import { ProjectImageDeck } from "@/components/projects/ProjectImageDeck";
 import { disciplineLabels, type Locale } from "@/lib/i18n";
 import { getLocale, getLocalizedContent } from "@/lib/locale";
+import { localizedPath } from "@/lib/locale-shared";
 import styles from "./v1.module.css";
 
 const V1_COPY = {
@@ -372,16 +374,18 @@ export default async function VersionOnePage() {
                 style={{ "--card-index": index } as React.CSSProperties}
                 key={project.id}
               >
-                <Link
-                  href={`/projects/${project.slug}`}
-                  className={styles.projectLink}
-                >
-                  <Image
-                    src={project.coverImage}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 767px) 100vw, 94vw"
-                    className={styles.projectImage}
+                <div className={styles.projectLink}>
+                  <ProjectImageDeck
+                    images={
+                      project.images.length > 0
+                        ? project.images
+                        : [project.coverImage]
+                    }
+                    title={project.title}
+                    locale={locale}
+                    mode="cinematic"
+                    sizes="100vw"
+                    className={styles.projectDeck}
                   />
                   <span className={styles.projectShade} />
                   <span className={styles.projectTopline}>
@@ -390,19 +394,26 @@ export default async function VersionOnePage() {
                     <span>{project.location}</span>
                     <span>{project.year}</span>
                   </span>
-                  <span className={styles.projectTitle}>
+                  <Link
+                    href={localizedPath(locale, `/projects/${project.slug}`)}
+                    className={styles.projectTitle}
+                  >
                     {project.title}
                     <span aria-hidden="true">↗</span>
-                  </span>
+                  </Link>
                   <span className={styles.projectRole}>{project.role}</span>
                   <span className={styles.projectSummary}>
                     {project.summary}
                   </span>
-                  <span className={styles.projectView} aria-hidden="true">
+                  <Link
+                    href={localizedPath(locale, `/projects/${project.slug}`)}
+                    className={styles.projectView}
+                    aria-label={`${copy.viewCase}: ${project.title}`}
+                  >
                     {copy.viewCase}
-                    <span>↗</span>
-                  </span>
-                </Link>
+                    <span aria-hidden="true">↗</span>
+                  </Link>
+                </div>
               </article>
             ))}
           </div>

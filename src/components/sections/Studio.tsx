@@ -57,7 +57,7 @@ export default async function Studio() {
               <p className="mt-6 text-[0.975rem] leading-7 text-stone">{body}</p>
             ) : null}
 
-            <div className="mt-10 border-l border-clay pl-6 md:mt-auto">
+            <div className="mt-16 border-l border-clay pl-6 md:mt-20">
               <p className="eyebrow text-clay">{copy.throughline}</p>
               <p className="mt-3 font-serif text-[1.55rem] font-light leading-snug text-ink">
                 {tagline}
