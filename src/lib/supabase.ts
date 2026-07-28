@@ -9,6 +9,16 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 let cachedClient: SupabaseClient | null = null;
+const CONTENT_REQUEST_TIMEOUT_MS = 2500;
+
+const fetchWithTimeout: typeof fetch = (input, init = {}) => {
+  const timeoutSignal = AbortSignal.timeout(CONTENT_REQUEST_TIMEOUT_MS);
+  const signal = init.signal
+    ? AbortSignal.any([init.signal, timeoutSignal])
+    : timeoutSignal;
+
+  return fetch(input, { ...init, signal });
+};
 
 /**
  * Returns a memoized Supabase client, or `null` when the required public env
@@ -24,6 +34,7 @@ export function getSupabaseClient(): SupabaseClient | null {
 
   cachedClient = createClient(url, anonKey, {
     auth: { persistSession: false },
+    global: { fetch: fetchWithTimeout },
   });
 
   return cachedClient;

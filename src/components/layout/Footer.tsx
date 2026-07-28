@@ -1,71 +1,51 @@
 import Link from "next/link";
+import { Container } from "@/components/ui/Container";
+import { getCommonCopy } from "@/lib/i18n";
+import { getLocale } from "@/lib/locale";
+import { getContent } from "@/lib/content";
+import { localizedPath } from "@/lib/locale-shared";
 
-const STUDIO_NAME = "Studio Kova";
-const EMAIL = "studio@studiokova.com";
-const LOCATION = "Copenhagen, DK";
+const footerLink =
+  "text-sm text-bone/60 transition-colors duration-[var(--dur)] hover:text-bone";
 
-const NAVIGATE: { label: string; href: string }[] = [
-  { label: "Studio", href: "/#studio" },
-  { label: "Disciplines", href: "/#disciplines" },
-  { label: "Work", href: "/projects" },
-  { label: "Process", href: "/#process" },
-  { label: "Contact", href: "/#contact" },
-];
-
-const DISCIPLINES: string[] = [
-  "Architecture",
-  "Interiors",
-  "Visualization",
-  "Fabrication",
-  "Drafting",
-];
-
-const SOCIAL: { label: string; href: string }[] = [
-  { label: "Instagram", href: "https://instagram.com/studiokova" },
-  { label: "Pinterest", href: "https://pinterest.com/studiokova" },
-  { label: "LinkedIn", href: "https://linkedin.com/company/studiokova" },
-];
-
-const headingClass =
-  "text-xs font-medium uppercase tracking-[0.18em] text-stone";
-const itemClass =
-  "text-sm text-stone underline decoration-oat decoration-1 underline-offset-[6px] transition-[text-decoration-color] duration-[var(--dur)] ease-quiet hover:decoration-clay";
-
-export function Footer() {
+export async function Footer() {
   const year = new Date().getFullYear();
+  const [locale, content] = await Promise.all([getLocale(), getContent()]);
+  const copy = getCommonCopy(locale);
+  const { social, email } = content.settings;
+  const navigation = [
+    { label: copy.header.studio, href: localizedPath(locale, "/studio") },
+    {
+      label: copy.header.disciplines,
+      href: localizedPath(locale, "/services"),
+    },
+    { label: copy.header.work, href: localizedPath(locale, "/projects") },
+    { label: copy.header.process, href: localizedPath(locale, "/#process") },
+    { label: copy.footer.contact, href: localizedPath(locale, "/contact") },
+  ] as const;
 
   return (
-    <footer className="border-t border-rule bg-bone">
-      <div className="mx-auto max-w-[1200px] px-6 py-20 md:px-10 md:py-24 lg:px-16">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
-          {/* Wordmark + contact */}
+    <footer className="bg-ink text-bone">
+      <Container className="pb-8 pt-16 md:pb-10 md:pt-20">
+        <div className="grid grid-cols-1 gap-12 border-b border-bone/15 pb-14 md:grid-cols-12 md:gap-x-4 md:gap-y-12 md:pb-20 lg:gap-x-12">
           <div className="md:col-span-5">
-            <p className="font-serif text-2xl font-normal tracking-[-0.01em] text-ink">
-              {STUDIO_NAME}
-            </p>
-            <p className="mt-4 max-w-[38ch] text-sm leading-relaxed text-stone">
-              A multidisciplinary studio drawing one continuous line from
-              concept to made object — architecture, interiors, visualization,
-              fabrication, and documentation.
-            </p>
-            <a
-              href={`mailto:${EMAIL}`}
-              className="mt-6 inline-block font-serif text-lg text-ink underline decoration-oat decoration-1 underline-offset-[6px] transition-[text-decoration-color] duration-[var(--dur)] ease-quiet hover:decoration-clay"
+            <Link
+              href={localizedPath(locale)}
+              className="font-serif text-[clamp(2.5rem,5vw,4.5rem)] font-light leading-none tracking-[-0.04em]"
             >
-              {EMAIL}
-            </a>
+              Studio Kova
+            </Link>
+            <p className="mt-6 max-w-[40ch] text-sm leading-7 text-bone/75">
+              {copy.footer.description}
+            </p>
           </div>
 
-          {/* Navigate */}
-          <nav
-            aria-label="Footer"
-            className="md:col-span-3 md:col-start-7"
-          >
-            <h2 className={headingClass}>Navigate</h2>
-            <ul className="mt-5 flex flex-col gap-3">
-              {NAVIGATE.map((link) => (
+          <nav aria-label="Footer" className="md:col-span-2 md:col-start-8">
+            <h2 className="eyebrow text-bone/70">{copy.footer.navigate}</h2>
+            <ul className="mt-5 space-y-3">
+              {navigation.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className={itemClass}>
+                  <Link href={link.href} className={footerLink}>
                     {link.label}
                   </Link>
                 </li>
@@ -73,46 +53,44 @@ export function Footer() {
             </ul>
           </nav>
 
-          {/* Connect */}
-          <div className="md:col-span-3">
-            <h2 className={headingClass}>Connect</h2>
-            <ul className="mt-5 flex flex-col gap-3">
-              {SOCIAL.map((social) => (
-                <li key={social.href}>
+          <div className="md:col-span-2 md:col-start-11">
+            <h2 className="eyebrow text-bone/70">{copy.footer.elsewhere}</h2>
+            <ul className="mt-5 space-y-3">
+              {social.map((item) => (
+                <li key={item.url}>
                   <a
-                    href={social.href}
+                    href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={itemClass}
+                    className={footerLink}
                   >
-                    {social.label}
+                    {item.label}
                   </a>
                 </li>
               ))}
             </ul>
-            <p className="mt-8 text-sm text-stone">{LOCATION}</p>
           </div>
         </div>
 
-        {/* Fine print */}
-        <div className="mt-16 flex flex-col gap-4 border-t border-rule pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs uppercase tracking-[0.18em] text-stone">
-            &copy; {year} {STUDIO_NAME}
+        <div className="flex flex-col gap-4 pt-7 text-[0.625rem] font-semibold uppercase tracking-[0.18em] text-bone/70 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {year} Studio Kova <span className="mx-2">/</span>{" "}
+            {copy.footer.location}
           </p>
-          <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs uppercase tracking-[0.18em] text-stone">
-            {DISCIPLINES.map((discipline, index) => (
-              <li key={discipline} className="flex items-center gap-3">
-                {index > 0 ? (
-                  <span aria-hidden="true" className="text-oat">
-                    /
-                  </span>
-                ) : null}
-                {discipline}
-              </li>
-            ))}
-          </ul>
+          <p>
+            <a href={`mailto:${email}`} className="hover:text-bone">
+              {email}
+            </a>
+            <span className="mx-2">/</span>
+            <Link
+              href={localizedPath(locale, "/privacy")}
+              className="hover:text-bone"
+            >
+              {copy.footer.privacy}
+            </Link>
+          </p>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

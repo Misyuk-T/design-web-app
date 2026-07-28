@@ -1,30 +1,52 @@
 import Link from "next/link";
-import type { Discipline } from "@/lib/types";
-import { getContent } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { LinkButton } from "@/components/ui/LinkButton";
+import { disciplineLabels, getCommonCopy } from "@/lib/i18n";
+import { getLocalizedContent } from "@/lib/locale";
+import { localizedPath } from "@/lib/locale-shared";
+import { getBusinessCopy, getProjectProof } from "@/lib/business-content";
 
-/** Human-readable discipline tags for the small uppercase card labels. */
-const DISCIPLINE_LABEL: Record<Discipline, string> = {
-  architecture: "Architecture",
-  interiors: "Interior Design",
-  visualization: "3D Visualization",
-  printing: "3D Printing",
-  drafting: "Drafting",
-};
+const CARD_LAYOUT = [
+  {
+    className: "md:col-span-7",
+    aspect: "5/6",
+    sizes: "(max-width: 767px) 100vw, 58vw",
+  },
+  {
+    className: "md:col-span-4 md:col-start-9 md:mt-32",
+    aspect: "4/5",
+    sizes: "(max-width: 767px) 100vw, 33vw",
+  },
+  {
+    className: "md:col-span-5 md:mt-8",
+    aspect: "4/5",
+    sizes: "(max-width: 767px) 100vw, 42vw",
+  },
+  {
+    className: "md:col-span-6 md:col-start-7 md:mt-28",
+    aspect: "5/6",
+    sizes: "(max-width: 767px) 100vw, 50vw",
+  },
+  {
+    className: "md:col-span-7 md:mt-8",
+    aspect: "5/6",
+    sizes: "(max-width: 767px) 100vw, 58vw",
+  },
+  {
+    className: "md:col-span-4 md:col-start-9 md:mt-32",
+    aspect: "1/1",
+    sizes: "(max-width: 767px) 100vw, 33vw",
+  },
+] as const;
 
-/**
- * Section 03 — Selected Projects. The portfolio band and emotional center:
- * featured work rendered imagery-forward in a two-column editorial grid with
- * reserved 4/5 aspect frames (zero layout shift, NFR-P3). Each card links to
- * its detail route. Async server component — fetches its own content.
- */
 export async function SelectedProjects() {
-  const { projects } = await getContent();
-  // getContent() already sorts (order asc, then year desc); keep only featured.
+  const { locale, content } = await getLocalizedContent();
+  const { projects } = content;
   const featured = projects.filter((project) => project.featured).slice(0, 6);
+  const copy = getCommonCopy(locale).selected;
+  const businessCopy = getBusinessCopy(locale).project;
 
   if (featured.length === 0) return null;
 
@@ -32,55 +54,72 @@ export async function SelectedProjects() {
     <section
       id="selected-projects"
       aria-labelledby="selected-projects-heading"
-      className="border-t border-rule py-24 md:py-32"
+      className="section-space bg-ink text-bone"
     >
       <Container>
-        {/* Band header — label + serif headline, with an "all projects" CTA. */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end">
+        <div className="grid grid-cols-1 gap-8 border-t border-bone/20 pt-5 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
-            <SectionLabel number="03">Selected Work</SectionLabel>
+            <SectionLabel
+              number="03"
+              inverse
+            >
+              {copy.label}
+            </SectionLabel>
             <h2
               id="selected-projects-heading"
-              className="mt-6 max-w-[18ch] font-serif text-[clamp(2rem,4vw,3.5rem)] font-light leading-[1.08] tracking-[-0.015em] text-ink"
+              className="display-lg mt-8 max-w-[13ch] font-serif font-light text-balance"
             >
-              A handful of places, each held end to end.
+              {copy.title}
             </h2>
           </div>
           <div className="md:col-span-4 md:justify-self-end">
-            <LinkButton href="/projects" withArrow>
-              All projects
+            <LinkButton href={localizedPath(locale, "/projects")} withArrow inverse>
+              {copy.all}
             </LinkButton>
           </div>
         </div>
 
-        {/* Imagery-forward grid. */}
-        <ul className="mt-16 grid grid-cols-1 gap-x-8 gap-y-16 md:mt-24 md:grid-cols-2">
-          {featured.map((project) => (
-            <li key={project.id}>
-              <Link
-                href={`/projects/${project.slug}`}
-                className="group block"
-              >
-                <Placeholder
-                  src={project.coverImage}
-                  alt={project.title}
-                  aspect="4/5"
-                  imgClassName="transition-transform duration-[var(--dur)] ease-quiet group-hover:scale-[1.03]"
-                />
-                <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-stone">
-                  {DISCIPLINE_LABEL[project.discipline]}
-                </p>
-                <h3 className="mt-3 font-serif text-[clamp(1.5rem,2.5vw,2.25rem)] font-normal leading-tight">
-                  <span className="text-ink underline decoration-transparent decoration-[1px] underline-offset-[6px] transition-[text-decoration-color] duration-[var(--dur)] ease-quiet group-hover:decoration-clay">
-                    {project.title}
-                  </span>
-                </h3>
-                <p className="mt-2 text-[0.9375rem] text-stone">
-                  {project.year} — {project.location}
-                </p>
-              </Link>
-            </li>
-          ))}
+        <ul className="mt-16 grid grid-cols-1 gap-y-16 md:mt-24 md:grid-cols-12 md:gap-x-8 md:gap-y-24">
+          {featured.map((project, index) => {
+            const layout = CARD_LAYOUT[index];
+            return (
+              <li key={project.id} className={layout.className}>
+                <Link
+                  href={localizedPath(locale, `/projects/${project.slug}`)}
+                  className="group block"
+                >
+                  <Placeholder
+                    src={project.coverImage}
+                    alt={project.title}
+                    aspect={layout.aspect}
+                    sizes={layout.sizes}
+                    imgClassName="transition-transform duration-[900ms] ease-quiet group-hover:scale-[1.025]"
+                  />
+                  <div className="mt-5 flex items-start justify-between gap-5 border-t border-bone/20 pt-4">
+                    <div>
+                      <p className="eyebrow text-bone/65">
+                        {disciplineLabels[locale][project.discipline]}
+                      </p>
+                      {!getProjectProof(locale, project.slug).verified ? (
+                        <p className="eyebrow mt-2 text-clay">
+                          {businessCopy.mockLabel}
+                        </p>
+                      ) : null}
+                      <h3 className="mt-3 font-serif text-[clamp(1.75rem,3vw,2.85rem)] font-light leading-none tracking-[-0.025em] text-bone">
+                        {project.title}
+                      </h3>
+                    </div>
+                    <p className="eyebrow shrink-0 text-bone/65">
+                      {project.year}
+                    </p>
+                  </div>
+                  <p className="mt-4 max-w-[52ch] text-sm leading-6 text-bone/70">
+                    {project.summary}
+                  </p>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </Container>
     </section>

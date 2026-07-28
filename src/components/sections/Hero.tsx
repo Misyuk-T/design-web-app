@@ -1,72 +1,95 @@
-import { getSiteSettings } from "@/lib/content";
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Placeholder } from "@/components/ui/Placeholder";
-import { SectionLabel } from "@/components/ui/SectionLabel";
+import { getCommonCopy } from "@/lib/i18n";
+import { getLocalizedContent } from "@/lib/locale";
+import { localizedPath } from "@/lib/locale-shared";
 
-/**
- * Hero — the full-bleed opening statement (ux-spec §5 book-end: unnumbered).
- *
- * One senior studio, end-to-end: the studio wordmark, the material-driven
- * positioning statement (this page's single <h1>), a quiet sensory sub-line,
- * and a subtle scroll cue — set over one large atmospheric local SVG plate.
- * Serif Display XL dominates; the warm `bone` scrim keeps ink text AA-legible
- * over the image and the `bg-oat` frame guarantees zero layout shift (NFR-P3).
- */
 export default async function Hero() {
-  const { studioName, tagline, heroStatement, heroSub } =
-    await getSiteSettings();
+  const { locale, content } = await getLocalizedContent();
+  const { studioName, tagline, heroStatement, heroSub, location } =
+    content.settings;
+  const copy = getCommonCopy(locale).hero;
 
   return (
     <section
       id="hero"
       aria-labelledby="hero-heading"
-      className="relative isolate flex min-h-[88vh] items-center overflow-hidden"
+      className="relative isolate min-h-[calc(100svh-4.5rem)] overflow-hidden bg-ink text-bone"
     >
-      {/* Atmospheric plate + warm scrim (decorative — hidden from AT). */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 -z-20">
         <Placeholder
           src="/images/hero.jpg"
           aspect="16/10"
           priority
-          className="h-full"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-bone/85 via-bone/65 to-bone/90"
+          sizes="100vw"
+          className="h-full rounded-none"
+          imgClassName="scale-[1.01] object-center"
         />
       </div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(24,22,19,0.30)_0%,rgba(24,22,19,0.18)_32%,rgba(24,22,19,0.84)_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-y-0 left-0 -z-10 w-full bg-[linear-gradient(90deg,rgba(24,22,19,0.45)_0%,transparent_58%)] md:w-3/4"
+      />
 
-      <Container className="py-24 md:py-32 lg:py-40">
-        <div className="max-w-[48rem]">
-          <SectionLabel className="mb-8 md:mb-10">{studioName}</SectionLabel>
+      <Container className="flex min-h-[calc(100svh-4.5rem)] flex-col pb-7 pt-8 md:pb-10 md:pt-10">
+        <div className="hero-reveal flex items-start justify-between border-t border-bone/35 pt-4">
+          <p className="eyebrow text-bone">{studioName}</p>
+          <div className="hidden items-center gap-10 text-right sm:flex">
+            <div>
+              <p className="eyebrow text-bone/80">{copy.based}</p>
+              <p className="mt-1 text-sm text-bone">{location}</p>
+            </div>
+            <div>
+              <p className="eyebrow text-bone/80">{copy.takingOn}</p>
+              <p className="mt-1 text-sm text-bone">{copy.commissions}</p>
+            </div>
+          </div>
+        </div>
 
+        <div className="hero-reveal-delayed mt-auto grid grid-cols-1 gap-8 md:grid-cols-12 md:items-end md:gap-10">
           <h1
             id="hero-heading"
-            className="font-serif font-light text-ink text-[clamp(2.75rem,6vw,5.5rem)] leading-[1.02] tracking-[-0.02em] text-balance"
+            className="display-xl max-w-[11.5ch] font-serif font-light text-balance md:col-span-8 lg:col-span-9"
           >
             {heroStatement}
           </h1>
 
-          <p className="mt-8 max-w-[34ch] font-serif font-normal text-ink text-[clamp(1.5rem,2.5vw,2.25rem)] leading-tight tracking-[-0.015em]">
-            {tagline}
-          </p>
+          <div className="border-t border-bone/35 pt-5 md:col-span-4 md:mb-1 lg:col-span-3">
+            <p className="font-serif text-[1.35rem] font-light leading-snug text-bone">
+              {tagline}
+            </p>
+            <p className="mt-4 text-sm leading-6 text-bone/85">{heroSub}</p>
+            <Link
+              href={localizedPath(locale, "/projects")}
+              className="group mt-7 inline-flex items-center gap-4 text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-bone"
+            >
+              {copy.explore}
+              <span
+                aria-hidden="true"
+                className="transition-transform duration-[var(--dur)] group-hover:translate-x-1.5"
+              >
+                &rarr;
+              </span>
+            </Link>
+          </div>
+        </div>
 
-          <p className="mt-8 max-w-[54ch] text-stone leading-relaxed text-[clamp(1.05rem,1.4vw,1.3rem)]">
-            {heroSub}
-          </p>
+        <div className="mt-10 flex items-end justify-between md:mt-12">
+          <p className="eyebrow text-bone/75 sm:hidden">{location}</p>
+          <span
+            aria-hidden="true"
+            className="ml-auto flex items-center gap-3 text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-bone/75"
+          >
+            {copy.scroll}
+            <span className="h-px w-10 bg-bone/45" />
+          </span>
         </div>
       </Container>
-
-      {/* Quiet scroll cue — book-end restraint; honors prefers-reduced-motion. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center md:bottom-10"
-      >
-        <span className="flex flex-col items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-stone">
-          Scroll
-          <span className="h-10 w-px bg-oat motion-safe:animate-pulse" />
-        </span>
-      </div>
     </section>
   );
 }

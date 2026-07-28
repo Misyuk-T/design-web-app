@@ -9,6 +9,8 @@ export interface LinkButtonProps {
   withArrow?: boolean;
   /** Opens in a new tab with safe rel. Use for off-site links. */
   external?: boolean;
+  /** Light treatment for dark or image-backed surfaces. */
+  inverse?: boolean;
   className?: string;
 }
 
@@ -22,6 +24,7 @@ export function LinkButton({
   children,
   withArrow = false,
   external = false,
+  inverse = false,
   className,
 }: LinkButtonProps) {
   return (
@@ -31,9 +34,12 @@ export function LinkButton({
         ? { target: "_blank", rel: "noopener noreferrer" }
         : {})}
       className={cx(
-        "group inline-flex items-center gap-3 rounded-frame border border-ink px-6 py-3",
-        "text-xs font-medium uppercase tracking-[0.18em] text-ink",
-        "transition-colors duration-[var(--dur)] ease-quiet hover:bg-ink hover:text-bone",
+        "group inline-flex min-h-12 items-center gap-5 rounded-frame border px-6 py-3",
+        "text-[0.6875rem] font-semibold uppercase tracking-[0.2em]",
+        "transition-colors duration-[var(--dur)] ease-quiet",
+        inverse
+          ? "border-bone/65 text-bone hover:border-bone hover:bg-bone hover:text-ink"
+          : "border-ink text-ink hover:bg-ink hover:text-bone",
         className,
       )}
     >

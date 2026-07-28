@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cx } from "./cx";
 
 export interface PlaceholderProps {
@@ -12,6 +13,8 @@ export interface PlaceholderProps {
   aspect?: string;
   /** Eager-load above-the-fold imagery (hero). Default lazy. */
   priority?: boolean;
+  /** Responsive source-size hint used by next/image. */
+  sizes?: string;
   /** Extra classes on the frame. */
   className?: string;
   /** Extra classes on the <img> (e.g. group-hover:scale-[1.03] from a card). */
@@ -29,6 +32,7 @@ export function Placeholder({
   alt,
   aspect = "4/5",
   priority = false,
+  sizes = "(max-width: 767px) 100vw, 50vw",
   className,
   imgClassName,
 }: PlaceholderProps) {
@@ -41,13 +45,13 @@ export function Placeholder({
       )}
       style={{ aspectRatio: aspect }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={src}
         alt={alt ?? ""}
         aria-hidden={decorative || undefined}
-        loading={priority ? "eager" : "lazy"}
-        decoding="async"
+        fill
+        sizes={sizes}
+        preload={priority}
         className={cx(
           "absolute inset-0 h-full w-full object-cover",
           imgClassName,

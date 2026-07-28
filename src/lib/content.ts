@@ -24,6 +24,48 @@ import {
   fallbackProcessSteps,
 } from './fallback-content';
 import { getSupabaseClient } from './supabase';
+import { cache } from 'react';
+
+const CONTENT_FETCH_TIMEOUT_MS = 2500;
+const REMOTE_RETRY_DELAY_MS = 60_000;
+let remoteRetryAfter = 0;
+let lastFallbackLogAt = 0;
+
+async function withContentTimeout<T>(operation: PromiseLike<T>): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(
+      () => reject(new Error('Supabase content request timed out')),
+      CONTENT_FETCH_TIMEOUT_MS,
+    );
+  });
+
+  try {
+    return await Promise.race([Promise.resolve(operation), timeout]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
+function canAttemptRemote() {
+  return Date.now() >= remoteRetryAfter;
+}
+
+function logFallback(
+  source: 'projects' | 'services' | 'settings',
+  error: unknown,
+) {
+  remoteRetryAfter = Date.now() + REMOTE_RETRY_DELAY_MS;
+  if (Date.now() - lastFallbackLogAt < REMOTE_RETRY_DELAY_MS) return;
+  lastFallbackLogAt = Date.now();
+
+  const message = `[content] Supabase ${source} fetch failed; using fallback.`;
+  if (process.env.NODE_ENV === 'production') {
+    console.warn(message, error);
+  } else {
+    console.info(message, error);
+  }
+}
 
 // ---------------------------------------------------------------------------
 // DB row shapes (snake_case) — internal to this module.
@@ -139,40 +181,45 @@ function sortServices(services: Service[]): Service[] {
 // ---------------------------------------------------------------------------
 
 async function fetchProjectsFromSupabase(): Promise<Project[] | null> {
+  if (!canAttemptRemote()) return null;
   const client = getSupabaseClient();
   if (!client) return null;
   try {
-    const { data, error } = await client.from('projects').select('*');
+    const { data, error } = await withContentTimeout(
+      client.from('projects').select('*'),
+    );
     if (error || !data) throw error ?? new Error('No projects returned');
     return sortProjects((data as ProjectRow[]).map(mapProject));
   } catch (err) {
-    console.error('[content] Supabase projects fetch failed; using fallback.', err);
+    logFallback('projects', err);
     return null;
   }
 }
 
 async function fetchServicesFromSupabase(): Promise<Service[] | null> {
+  if (!canAttemptRemote()) return null;
   const client = getSupabaseClient();
   if (!client) return null;
   try {
-    const { data, error } = await client.from('services').select('*');
+    const { data, error } = await withContentTimeout(
+      client.from('services').select('*'),
+    );
     if (error || !data) throw error ?? new Error('No services returned');
     return sortServices((data as ServiceRow[]).map(mapService));
   } catch (err) {
-    console.error('[content] Supabase services fetch failed; using fallback.', err);
+    logFallback('services', err);
     return null;
   }
 }
 
 async function fetchSettingsFromSupabase(): Promise<SiteSettings | null> {
+  if (!canAttemptRemote()) return null;
   const client = getSupabaseClient();
   if (!client) return null;
   try {
-    const { data, error } = await client
-      .from('site_settings')
-      .select('*')
-      .eq('id', 1)
-      .single();
+    const { data, error } = await withContentTimeout(
+      client.from('site_settings').select('*').eq('id', 1).single(),
+    );
     if (error || !data) throw error ?? new Error('No site_settings row');
     const row = data as SiteSettingsRow;
 
@@ -180,10 +227,12 @@ async function fetchSettingsFromSupabase(): Promise<SiteSettings | null> {
     // in the site_settings.process_steps jsonb column. Prefer the table.
     let processSteps: ProcessStep[] = [];
     try {
-      const { data: stepRows, error: stepErr } = await client
-        .from('process_steps')
-        .select('*')
-        .order('order', { ascending: true });
+      const { data: stepRows, error: stepErr } = await withContentTimeout(
+        client
+          .from('process_steps')
+          .select('*')
+          .order('order', { ascending: true }),
+      );
       if (!stepErr && stepRows && stepRows.length > 0) {
         processSteps = (stepRows as ProcessStepRow[]).map(mapProcessStep);
       }
@@ -210,7 +259,7 @@ async function fetchSettingsFromSupabase(): Promise<SiteSettings | null> {
       processSteps,
     };
   } catch (err) {
-    console.error('[content] Supabase settings fetch failed; using fallback.', err);
+    logFallback('settings', err);
     return null;
   }
 }
@@ -219,31 +268,31 @@ async function fetchSettingsFromSupabase(): Promise<SiteSettings | null> {
 // Public API.
 // ---------------------------------------------------------------------------
 
-export async function getProjects(): Promise<Project[]> {
+export const getProjects = cache(async (): Promise<Project[]> => {
   const remote = await fetchProjectsFromSupabase();
   return remote ?? sortProjects(fallbackProjects);
-}
+});
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
+export const getProjectBySlug = cache(async (slug: string): Promise<Project | null> => {
   const projects = await getProjects();
   return projects.find((p) => p.slug === slug) ?? null;
-}
+});
 
-export async function getServices(): Promise<Service[]> {
+export const getServices = cache(async (): Promise<Service[]> => {
   const remote = await fetchServicesFromSupabase();
   return remote ?? sortServices(fallbackServices);
-}
+});
 
-export async function getSiteSettings(): Promise<SiteSettings> {
+export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
   const remote = await fetchSettingsFromSupabase();
   return remote ?? fallbackSettings;
-}
+});
 
-export async function getContent(): Promise<SiteContent> {
+export const getContent = cache(async (): Promise<SiteContent> => {
   const [settings, services, projects] = await Promise.all([
     getSiteSettings(),
     getServices(),
     getProjects(),
   ]);
   return { settings, services, projects };
-}
+});

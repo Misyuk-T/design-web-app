@@ -1,73 +1,55 @@
-import { getContent } from "@/lib/content";
 import Container from "@/components/ui/Container";
 import SectionLabel from "@/components/ui/SectionLabel";
-import Hairline from "@/components/ui/Hairline";
+import { getCommonCopy } from "@/lib/i18n";
+import { getLocalizedContent } from "@/lib/locale";
 
-/**
- * Process (band 04) — the in-house throughline made explicit.
- *
- * The studio's argument for continuity: concept, design, visualization,
- * documentation and making happen under one roof, in one hand. Rendered as a
- * numbered editorial list — each step a short contemplative line — with the
- * signature hairline rules and generous vertical rhythm (ux-spec §3, §5).
- *
- * Async server component; sources its steps from getContent().settings.
- */
 export default async function Process() {
-  const { settings } = await getContent();
-  const steps = settings.processSteps;
+  const { locale, content } = await getLocalizedContent();
+  const { settings } = content;
+  const copy = getCommonCopy(locale).process;
 
   return (
     <section
       id="process"
       aria-labelledby="process-heading"
-      className="border-t border-rule py-24 md:py-32"
+      className="section-space bg-clay text-bone"
     >
       <Container>
-        {/* Band header — asymmetric: label + headline left, framing line right. */}
-        <div className="grid grid-cols-1 gap-y-8 md:grid-cols-12 md:gap-x-8">
-          <div className="md:col-span-6">
-            <SectionLabel number="04">Process</SectionLabel>
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
+          <div className="md:col-span-8">
+            <SectionLabel
+              number="04"
+              inverse
+            >
+              {copy.label}
+            </SectionLabel>
             <h2
               id="process-heading"
-              className="mt-6 font-serif font-light tracking-[-0.015em] leading-[1.08] text-[clamp(2rem,4vw,3.5rem)]"
+              className={`display-lg mt-8 max-w-[12ch] font-serif font-light text-balance ${
+                locale === "uk" ? "display-lg-uk" : ""
+              }`}
             >
-              One studio, from first line to finished object.
+              {copy.title}
             </h2>
           </div>
-          <div className="md:col-span-5 md:col-start-8 md:self-end">
-            <p className="max-w-[46ch] text-[clamp(1.05rem,1.4vw,1.3rem)] leading-relaxed text-stone">
-              Every discipline lives under one roof, so nothing is handed off and
-              nothing is lost in translation — the same hands that imagine a space
-              draw it, render it, detail it and make it.
-            </p>
-          </div>
+          <p className="copy-lead max-w-[42ch] text-bone md:col-span-4">
+            {copy.lead}
+          </p>
         </div>
 
-        {/* Numbered steps — editorial list, hairline-separated rows. */}
-        <ol className="mt-16 md:mt-24">
-          {steps.map((step, i) => (
-            <li key={step.number}>
-              {i === 0 ? <Hairline /> : null}
-              <div className="grid grid-cols-1 gap-x-8 gap-y-4 py-10 md:grid-cols-12 md:py-14">
-                <div className="md:col-span-5">
-                  <div className="flex items-baseline gap-5">
-                    <span
-                      aria-hidden="true"
-                      className="text-xs font-medium uppercase tracking-[0.18em] text-stone"
-                    >
-                      {step.number}
-                    </span>
-                    <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2.25rem)] font-normal leading-tight">
-                      {step.title}
-                    </h3>
-                  </div>
-                </div>
-                <p className="max-w-[52ch] leading-relaxed text-stone md:col-span-6 md:col-start-7">
-                  {step.description}
-                </p>
-              </div>
-              <Hairline />
+        <ol className="process-grid mt-16 grid grid-cols-1 border-t border-bone/30 sm:grid-cols-2 md:mt-24 lg:grid-cols-3">
+          {settings.processSteps.map((step) => (
+            <li
+              key={step.number}
+              className="flex min-h-[16rem] min-w-0 flex-col py-7 sm:min-h-[22rem] sm:px-6"
+            >
+              <span className="eyebrow text-bone">{step.number}</span>
+              <h3 className="mt-8 min-w-0 font-serif text-[clamp(1.65rem,2.2vw,1.9rem)] font-light leading-[1.08] tracking-[-0.025em] [hyphens:auto] [overflow-wrap:anywhere]">
+                {step.title}
+              </h3>
+              <p className="mt-auto pt-10 text-sm leading-6 text-bone/90">
+                {step.description}
+              </p>
             </li>
           ))}
         </ol>

@@ -1,10 +1,21 @@
+import type { Metadata } from "next";
 import Hero from "@/components/sections/Hero";
+import CommercialPaths from "@/components/sections/CommercialPaths";
 import Studio from "@/components/sections/Studio";
 import Disciplines from "@/components/sections/Disciplines";
 import SelectedProjects from "@/components/sections/SelectedProjects";
 import Process from "@/components/sections/Process";
 import Capabilities from "@/components/sections/Capabilities";
 import Contact from "@/components/sections/Contact";
+import { localizedAlternates } from "@/lib/business-content";
+import { getLocale } from "@/lib/locale";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    alternates: localizedAlternates("/", locale),
+  };
+}
 
 /**
  * Home — the single-page editorial composition. Sections render in landing
@@ -17,6 +28,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <CommercialPaths />
       <Studio />
       <Disciplines />
       <SelectedProjects />

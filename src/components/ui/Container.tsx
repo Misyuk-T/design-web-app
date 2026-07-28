@@ -5,7 +5,7 @@ export interface ContainerProps {
   /** Element to render as. Default: "div". */
   as?: ElementType;
   /**
-   * "default" — the 1200px editorial measure (most bands).
+   * "default" — the 1320px editorial measure (most bands).
    * "narrow" — a ~68ch reading measure for text-heavy passages.
    */
   width?: "default" | "narrow";
@@ -27,8 +27,8 @@ export function Container({
   return (
     <Tag
       className={cx(
-        "mx-auto w-full px-6 md:px-10 lg:px-16",
-        width === "narrow" ? "max-w-[68ch]" : "max-w-[1200px]",
+        "mx-auto w-full px-5 sm:px-7 md:px-10 lg:px-14",
+        width === "narrow" ? "max-w-[72ch]" : "max-w-[1320px]",
         className,
       )}
     >

@@ -1,80 +1,135 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { Discipline } from "@/lib/types";
-import { getProjects } from "@/lib/content";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Placeholder } from "@/components/ui/Placeholder";
+import { disciplineLabels, getCommonCopy } from "@/lib/i18n";
+import { getLocale, getLocalizedContent } from "@/lib/locale";
+import {
+  getBusinessCopy,
+  getProjectProof,
+  localizedAlternates,
+} from "@/lib/business-content";
+import { localizedPath } from "@/lib/locale-shared";
 
-/** Human-readable discipline tags for the small uppercase card labels. */
-const DISCIPLINE_LABEL: Record<Discipline, string> = {
-  architecture: "Architecture",
-  interiors: "Interior Design",
-  visualization: "3D Visualization",
-  printing: "3D Printing",
-  drafting: "Drafting",
-};
+const INDEX_LAYOUT = [
+  { className: "md:col-span-7", aspect: "5/6" },
+  { className: "md:col-span-4 md:col-start-9 md:mt-32", aspect: "4/5" },
+  { className: "md:col-span-5 md:mt-8", aspect: "4/5" },
+  { className: "md:col-span-6 md:col-start-7 md:mt-28", aspect: "5/6" },
+  { className: "md:col-span-7 md:mt-8", aspect: "5/6" },
+  { className: "md:col-span-4 md:col-start-9 md:mt-32", aspect: "1/1" },
+] as const;
 
-export const metadata: Metadata = {
-  title: "Selected Projects",
-  description:
-    "A body of recent work across architecture, interiors, visualization, additive fabrication, and documentation — each project carried from first sketch to made object.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const copy = getCommonCopy(locale).projects;
+  return {
+    title: copy.metadataTitle,
+    description: copy.metadataDescription,
+    alternates: localizedAlternates("/projects", locale),
+  };
+}
 
-/**
- * /projects — the full portfolio index. Lists every project (sorted order asc,
- * then year desc) in the same editorial two-column grid as the home band, with
- * reserved 4/5 aspect frames. Async server component; statically generated.
- */
 export default async function ProjectsPage() {
-  const projects = await getProjects();
+  const { locale, content } = await getLocalizedContent();
+  const { projects } = content;
+  const copy = getCommonCopy(locale).projects;
+  const businessCopy = getBusinessCopy(locale).project;
+  const years = projects.map((project) => project.year);
 
   return (
-    <div className="py-24 md:py-32">
-      <Container>
-        {/* Page header. */}
-        <header className="max-w-[46ch]">
-          <SectionLabel>Work</SectionLabel>
-          <h1 className="mt-6 font-serif text-[clamp(2.25rem,5vw,4rem)] font-light leading-[1.05] tracking-[-0.02em] text-ink">
-            Selected projects
-          </h1>
-          <p className="mt-6 text-[clamp(1.05rem,1.4vw,1.3rem)] leading-relaxed text-stone">
-            One studio, five disciplines. A selection of work carried end to
-            end — from the first line drawn by hand to the last fitting set on
-            site.
-          </p>
-        </header>
+    <div>
+      <header className="section-space border-b border-rule">
+        <Container>
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:items-end md:gap-10">
+            <div className="md:col-span-9">
+              <SectionLabel>{copy.archive}</SectionLabel>
+              <h1 className="display-xl mt-8 max-w-[10ch] font-serif font-light text-balance">
+                {copy.title}
+              </h1>
+            </div>
+            <div className="md:col-span-3 md:pb-2">
+              <p className="copy-lead text-stone">
+                {copy.lead}
+              </p>
+            </div>
+          </div>
 
-        {/* Full portfolio grid. */}
-        <ul className="mt-16 grid grid-cols-1 gap-x-8 gap-y-16 md:mt-24 md:grid-cols-2">
-          {projects.map((project) => (
-            <li key={project.id}>
-              <Link
-                href={`/projects/${project.slug}`}
-                className="group block"
-              >
-                <Placeholder
-                  src={project.coverImage}
-                  alt={project.title}
-                  aspect="4/5"
-                  imgClassName="transition-transform duration-[var(--dur)] ease-quiet group-hover:scale-[1.03]"
-                />
-                <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-stone">
-                  {DISCIPLINE_LABEL[project.discipline]}
-                </p>
-                <h2 className="mt-3 font-serif text-[clamp(1.5rem,2.5vw,2.25rem)] font-normal leading-tight">
-                  <span className="text-ink underline decoration-transparent decoration-[1px] underline-offset-[6px] transition-[text-decoration-color] duration-[var(--dur)] ease-quiet group-hover:decoration-clay">
-                    {project.title}
-                  </span>
-                </h2>
-                <p className="mt-2 text-[0.9375rem] text-stone">
-                  {project.year} — {project.location}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </Container>
+          <dl className="mt-16 grid grid-cols-2 border-y border-rule sm:grid-cols-4 md:mt-24">
+            <div className="py-5 sm:border-r sm:border-rule sm:px-6 sm:first:pl-0">
+              <dt className="eyebrow text-stone">{copy.projects}</dt>
+              <dd className="mt-2 font-serif text-2xl">{projects.length}</dd>
+            </div>
+            <div className="border-l border-rule py-5 pl-6 sm:border-l-0 sm:border-r sm:px-6">
+              <dt className="eyebrow text-stone">{copy.years}</dt>
+              <dd className="mt-2 font-serif text-2xl">
+                {Math.min(...years)}—{Math.max(...years)}
+              </dd>
+            </div>
+            <div className="border-t border-rule py-5 sm:border-r sm:border-t-0 sm:px-6">
+              <dt className="eyebrow text-stone">{copy.disciplines}</dt>
+              <dd className="mt-2 font-serif text-2xl">{copy.five}</dd>
+            </div>
+            <div className="border-l border-t border-rule py-5 pl-6 sm:border-l-0 sm:border-t-0 sm:pl-6">
+              <dt className="eyebrow text-stone">{copy.base}</dt>
+              <dd className="mt-2 font-serif text-2xl">{copy.copenhagen}</dd>
+            </div>
+          </dl>
+        </Container>
+      </header>
+
+      <section aria-label={copy.all} className="section-space">
+        <Container>
+          <ul className="grid grid-cols-1 gap-y-16 md:grid-cols-12 md:gap-x-8 md:gap-y-24">
+            {projects.map((project, index) => {
+              const layout = INDEX_LAYOUT[index % INDEX_LAYOUT.length];
+              const size =
+                layout.className.includes("col-span-7")
+                  ? "(max-width: 767px) 100vw, 58vw"
+                  : "(max-width: 767px) 100vw, 42vw";
+
+              return (
+                <li key={project.id} className={layout.className}>
+                  <Link
+                    href={localizedPath(locale, `/projects/${project.slug}`)}
+                    className="group block"
+                  >
+                    <Placeholder
+                      src={project.coverImage}
+                      alt={project.title}
+                      aspect={layout.aspect}
+                      sizes={size}
+                      imgClassName="transition-transform duration-[900ms] ease-quiet group-hover:scale-[1.025]"
+                    />
+                    <div className="mt-5 flex items-start justify-between gap-5 border-t border-rule pt-4">
+                      <div>
+                        <p className="eyebrow text-stone">
+                          {disciplineLabels[locale][project.discipline]}
+                        </p>
+                        {!getProjectProof(locale, project.slug).verified ? (
+                          <p className="eyebrow mt-2 text-clay">
+                            {businessCopy.mockLabel}
+                          </p>
+                        ) : null}
+                        <h2 className="mt-3 font-serif text-[clamp(1.8rem,3vw,2.85rem)] font-light leading-none tracking-[-0.03em] transition-colors duration-[var(--dur)] group-hover:text-clay">
+                          {project.title}
+                        </h2>
+                      </div>
+                      <p className="eyebrow shrink-0 text-stone">
+                        {project.year}
+                      </p>
+                    </div>
+                    <p className="mt-4 max-w-[52ch] text-sm leading-6 text-stone">
+                      {project.summary}
+                    </p>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Container>
+      </section>
     </div>
   );
 }

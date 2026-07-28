@@ -1,22 +1,14 @@
-import { getContent } from "@/lib/content";
 import Container from "@/components/ui/Container";
 import SectionLabel from "@/components/ui/SectionLabel";
-import Hairline from "@/components/ui/Hairline";
+import { getCommonCopy } from "@/lib/i18n";
+import { getLocalizedContent } from "@/lib/locale";
+import Link from "next/link";
+import { localizedPath } from "@/lib/locale-shared";
 
-/**
- * Disciplines / Services (ux-spec §5, band "02").
- *
- * The five in-house disciplines as one editorial, hairline-separated list —
- * imagery-light and typographic. Ordered by `throughlineStep` so the section
- * reads as a single continuous capability: concept → design → visualization →
- * documentation → made object, all under one roof.
- *
- * Async server component. Fetches its own data via getContent().
- */
 export async function Disciplines() {
-  const { services } = await getContent();
-
-  // Honor the throughline sequence explicitly (concept → made object).
+  const { locale, content } = await getLocalizedContent();
+  const { services } = content;
+  const copy = getCommonCopy(locale).disciplines;
   const disciplines = [...services].sort(
     (a, b) => a.throughlineStep - b.throughlineStep,
   );
@@ -25,75 +17,63 @@ export async function Disciplines() {
     <section
       id="disciplines"
       aria-labelledby="disciplines-heading"
-      className="py-24 md:py-32"
+      className="section-space border-t border-rule bg-ivory"
     >
       <Container>
-        {/* Band header — decorative number + serif headline + throughline lead */}
-        <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-12">
-          <div className="md:col-span-5">
-            <SectionLabel number="02">Disciplines</SectionLabel>
-            <h2
-              id="disciplines-heading"
-              className="mt-6 font-serif text-[clamp(2rem,4vw,3.5rem)] font-light leading-[1.08] tracking-[-0.015em] text-ink"
-            >
-              One studio, five disciplines, no handoffs.
-            </h2>
+        <div className="grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-32">
+              <SectionLabel number="02">{copy.label}</SectionLabel>
+              <h2
+                id="disciplines-heading"
+                className="section-title mt-7 max-w-[11.5ch] font-serif font-light text-balance"
+                style={
+                  locale === "uk"
+                    ? { fontSize: "clamp(2.35rem, 4.45vw, 4.25rem)" }
+                    : undefined
+                }
+              >
+                {copy.title}
+              </h2>
+              <p className="mt-7 max-w-[38ch] text-[0.975rem] leading-7 text-stone">
+                {copy.lead}
+              </p>
+              <div className="mt-10 hidden items-center gap-4 lg:flex">
+                <span className="eyebrow text-clay">01</span>
+                <span className="h-px w-16 bg-clay/50" />
+                <span className="eyebrow text-clay">05</span>
+              </div>
+            </div>
           </div>
-          <div className="md:col-span-6 md:col-start-7">
-            <p className="max-w-[46ch] text-[clamp(1.05rem,1.4vw,1.3rem)] leading-relaxed text-stone">
-              Most projects are pulled apart and passed between practices — the
-              idea drawn by one hand, rendered by another, documented by a third,
-              made by a fourth. We keep the whole line in-house, so intent
-              survives from the first sketch to the object you can hold.
-            </p>
-            <p
-              aria-hidden="true"
-              className="mt-8 font-serif text-[clamp(1.05rem,1.6vw,1.35rem)] font-light italic leading-snug text-clay"
-            >
-              Concept &rarr; design &rarr; visualization &rarr; documentation
-              &rarr; made object.
-            </p>
-          </div>
-        </div>
 
-        {/* The disciplines list — hairline rows, small labels, serif titles */}
-        <ol className="mt-16 md:mt-24">
-          {disciplines.map((service, i) => (
-            <li key={service.id}>
-              {i === 0 && <Hairline />}
-              <div className="grid grid-cols-1 items-baseline gap-x-8 gap-y-4 py-10 md:grid-cols-12 md:py-12">
-                {/* Editorial number */}
-                <div className="md:col-span-2">
-                  <span className="font-serif text-[clamp(1.75rem,3vw,2.75rem)] font-light leading-none text-stone">
+          <ol className="border-t border-rule lg:col-span-7 lg:col-start-6">
+            {disciplines.map((service) => (
+              <li
+                key={service.id}
+                className="group border-b border-rule py-8 md:py-10"
+              >
+                <div className="grid grid-cols-[2.5rem_1fr] gap-x-3 gap-y-5 sm:grid-cols-[3.5rem_minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-x-7">
+                  <span className="eyebrow pt-2 text-stone">
                     {service.number}
                   </span>
-                </div>
-
-                {/* Serif title + throughline caption */}
-                <div className="md:col-span-4">
-                  <h3 className="font-serif text-[clamp(1.5rem,2.5vw,2.25rem)] font-normal leading-tight text-ink">
-                    {service.title}
+                  <h3 className="min-w-0 font-serif text-[clamp(1.75rem,2.8vw,3rem)] font-light leading-[1.04] tracking-[-0.03em] text-ink transition-colors duration-[var(--dur)] [hyphens:auto] [overflow-wrap:anywhere] group-hover:text-clay">
+                    <Link
+                      href={localizedPath(
+                        locale,
+                        `/services/${service.key}`,
+                      )}
+                    >
+                      {service.title}
+                    </Link>
                   </h3>
-                  <p className="mt-3 text-xs font-medium uppercase tracking-[0.18em] text-stone">
-                    <span className="text-stone">
-                      Step {String(service.throughlineStep).padStart(2, "0")}
-                    </span>
-                    <span aria-hidden="true"> — </span>
-                    <span className="text-stone">Continuous line</span>
-                  </p>
-                </div>
-
-                {/* Studio-voice description */}
-                <div className="md:col-span-6">
-                  <p className="max-w-[52ch] text-base leading-relaxed text-stone">
+                  <p className="col-start-2 max-w-[46ch] text-[0.95rem] leading-7 text-stone sm:col-start-3 sm:pt-1">
                     {service.description}
                   </p>
                 </div>
-              </div>
-              <Hairline />
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+        </div>
       </Container>
     </section>
   );

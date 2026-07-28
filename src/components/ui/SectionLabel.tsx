@@ -8,6 +8,8 @@ export interface SectionLabelProps {
   children: ReactNode;
   /** Element to render as. Default: "p" (decorative — the real <h2> follows). */
   as?: ElementType;
+  /** Use the high-contrast light treatment on dark or colored sections. */
+  inverse?: boolean;
   className?: string;
 }
 
@@ -20,12 +22,14 @@ export function SectionLabel({
   number,
   children,
   as: Tag = "p",
+  inverse = false,
   className,
 }: SectionLabelProps) {
   return (
     <Tag
       className={cx(
-        "text-xs font-medium uppercase tracking-[0.18em] text-stone",
+        "eyebrow",
+        inverse ? "text-bone" : "text-stone",
         className,
       )}
     >
@@ -35,7 +39,7 @@ export function SectionLabel({
           <span aria-hidden="true"> — </span>
         </>
       ) : null}
-      <span className="text-ink">{children}</span>
+      <span className={inverse ? "text-bone" : "text-ink"}>{children}</span>
     </Tag>
   );
 }
