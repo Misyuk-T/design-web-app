@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ConceptMotionShell } from "@/components/concepts/ConceptMotionShell";
 import { MotionTicker } from "@/components/concepts/MotionTicker";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
+import { VariantSwitch } from "@/components/layout/VariantSwitch";
 import { disciplineLabels, type Locale } from "@/lib/i18n";
 import { getLocale, getLocalizedContent } from "@/lib/locale";
 import styles from "./v1.module.css";
@@ -208,11 +209,7 @@ export default async function VersionOnePage() {
         </nav>
 
         <div className={styles.headerTools}>
-          <nav className={styles.versions} aria-label={copy.versions}>
-            <Link href="/">{copy.original}</Link>
-            <span aria-current="page">V1</span>
-            <Link href="/v2">V2</Link>
-          </nav>
+          <VariantSwitch locale={locale} inverse />
           <LanguageSwitch locale={locale} inverse />
         </div>
       </header>

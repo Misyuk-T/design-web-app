@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ConceptMotionShell } from "@/components/concepts/ConceptMotionShell";
 import { MotionTicker } from "@/components/concepts/MotionTicker";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
+import { VariantSwitch } from "@/components/layout/VariantSwitch";
 import { disciplineLabels, type Locale } from "@/lib/i18n";
 import { getLocale, getLocalizedContent } from "@/lib/locale";
 import styles from "./v2.module.css";
@@ -236,11 +237,7 @@ export default async function VersionTwoPage() {
         </nav>
 
         <div className={styles.headerTools}>
-          <nav className={styles.versions} aria-label={copy.versions}>
-            <Link href="/">00</Link>
-            <Link href="/v1">01</Link>
-            <span aria-current="page">02</span>
-          </nav>
+          <VariantSwitch locale={locale} />
           <LanguageSwitch locale={locale} />
         </div>
       </header>

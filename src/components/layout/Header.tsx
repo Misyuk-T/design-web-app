@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { MobileMenu } from "@/components/layout/MobileMenu";
+import { VariantSwitch } from "@/components/layout/VariantSwitch";
 import { Container } from "@/components/ui/Container";
 import { getCommonCopy } from "@/lib/i18n";
 import { getLocalizedContent } from "@/lib/locale";
@@ -67,10 +68,12 @@ export async function Header() {
               <span className="h-1.5 w-1.5 rounded-full bg-clay transition-transform duration-[var(--dur)] group-hover:scale-150" />
               {navigation.start}
             </Link>
+            <VariantSwitch locale={locale} />
             <LanguageSwitch locale={locale} />
           </div>
 
           <div className="flex items-center gap-3 lg:hidden">
+            <VariantSwitch locale={locale} />
             <LanguageSwitch locale={locale} />
             <MobileMenu
               links={navLinks}
