@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Studio Kova
 
-## Getting Started
+Portfolio and landing site for a small multidisciplinary design studio — architecture, interiors, 3D visualization, 3D printing, and project documentation.
 
-First, run the development server:
+**[Live site](https://design-web-app-topaz.vercel.app/uk)**
+
+The brief was to make a five-discipline practice read as one confident studio instead of a freelancer with a service menu. Most of the work went into structure and typography rather than features.
+
+## Bilingual routing
+
+Ukrainian and English share one route tree. `/uk/projects` and `/en/projects` are rewritten by middleware to `/projects`, with the locale carried in a cookie and read server-side. No duplicated pages, no `[locale]` segment, and unprefixed URLs still resolve using the visitor's stored preference.
+
+## Content
+
+Four tables in Supabase — `projects`, `services`, `process_steps`, `site_settings`. Every read is wrapped so that missing environment variables or a failed query return typed local fallback content instead of throwing.
+
+That is not defensive decoration. The project runs on Supabase's free tier, which pauses idle databases; when that happens the site keeps serving its last shipped content rather than breaking.
+
+## Design concepts
+
+`/v1` and `/v2` are alternative visual directions kept alongside the production layout, sharing the same data and locale handling. They exist so the client could compare directions on real content instead of static mockups.
+
+## Stack
+
+Next.js App Router, TypeScript, Tailwind CSS v4, Supabase. `sitemap.ts`, `robots.ts`, and `manifest.ts` are generated from the same content source.
+
+## Running it
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Supabase credentials are optional:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Leave them unset and the site renders from fallback content. To work against a real database, apply `supabase/migrations/0001_init.sql` and `supabase/seed.sql`.
 
-## Learn More
+## Documentation
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`docs/` holds the brief, PRD, UX spec, and architecture notes written before implementation.
